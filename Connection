@@ -1,0 +1,31 @@
+⚡ Connection Diagram — Description
+Here’s how your components are connected:
+
+1️⃣ ESP8266 NodeMCU
+NodeMCU Pin	Connected To	Notes
+D1 (GPIO5)	1kΩ resistor → 2N2222 base	Controls 2N2222 switching
+D2 (GPIO4)	LED + resistor (220-330Ω) → GND	Status LED
+GND	Common GND	Shared with MOSFET, 2N2222
+3V3 or external power	Blynk + logic power	Power for NodeMCU
+
+2️⃣ 2N2222 NPN Transistor
+2N2222 Pin	Connected To	Notes
+Base	From NodeMCU D1 via 1kΩ resistor	Controls transistor
+Collector	MOSFET Gate (IRF510)	Drives gate
+Emitter	GND	Common ground
+
+3️⃣ IRF510 MOSFET
+IRF510 Pin	Connected To	Notes
+Gate	2N2222 collector	Controlled by 2N2222
+Source	GND	Common ground
+Drain	Negative terminal of ignitor	Switches ignitor current
+
+4️⃣ Ignitor
+Pin	Connected To	Notes
+Negative	MOSFET Drain	Current switched here
+Positive	Power supply (+V for ignitor)	E.g., battery or external ignitor PSU
+
+5️⃣ Status LED
+Pin	Connected To
+Anode (+)	D2 via resistor
+Cathode (-)	GND
