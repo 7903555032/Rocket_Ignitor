@@ -1,0 +1,46 @@
+#define BLYNK_TEMPLATE_ID "TMPL3FH_RFLL8"
+#define BLYNK_TEMPLATE_NAME "Ignitor"
+#define BLYNK_AUTH_TOKEN "o5sKYGJXIreCSYAcnsLbY1wi7bV8Yodv"
+
+#include <ESP8266WiFi.h>
+#include <BlynkSimpleEsp8266.h>
+
+// WiFi credentials
+char ssid[] = "IOTWifi";
+char pass[] = "9199011445";
+
+// Pin assignments
+const int ignitorControlPin = D1; // To 1kΩ → Base of 2N2222
+const int ledPin = D2;            // Status LED
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(ignitorControlPin, OUTPUT);
+  pinMode(ledPin, OUTPUT);
+
+  // Safe start
+  digitalWrite(ignitorControlPin, HIGH); // This will keep MOSFET off
+  digitalWrite(ledPin, LOW);             // LED OFF
+
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+  Serial.println("🚀 System Ready - Waiting for ignition command...");
+}
+
+// Inverted logic due to pull-down switching
+BLYNK_WRITE(V0) {
+  int state = param.asInt(); // 1 = ON, 0 = OFF
+
+  if (state == 1) {
+    digitalWrite(ignitorControlPin, LOW);  // Turn ON 2N2222 → MOSFET ON
+    digitalWrite(ledPin, HIGH);            // LED ON
+    Serial.println("🔥 Ignitor ON");
+  } else {
+    digitalWrite(ignitorControlPin, HIGH); // Turn OFF 2N2222 → MOSFET OFF
+    digitalWrite(ledPin, LOW);             // LED OFF
+    Serial.println("✅ Ignitor OFF");
+  }
+}
+
+void loop() {
+  Blynk.run();
+}
